@@ -1,5 +1,5 @@
 {
-  "name": "frontend-boilerplate",
+  "name": "projeto-fenix-loomi",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,8 +34,6 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "expo-server-sdk": "^3.15.0",
-    "firebase": "^11.10.0",
-    "firebase-admin": "^13.4.0",
     "lucide-react": "^0.525.0",
     "next": "15.3.4",
     "nodemailer": "^7.0.5",
@@ -53,7 +51,8 @@
     "tailwindcss-animate": "^1.0.7",
     "use-mask-input": "^3.5.0",
     "uuid": "^11.1.0",
-    "zod": "^3.25.67"
+    "zod": "^3.25.67",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

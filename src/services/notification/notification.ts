@@ -1,27 +1,25 @@
-import { NotificationEntity } from '@/types/entities/notification'
+interface NotificationUserInput {
+  userId: string
+  tokens: string[]
+}
 
-import { createFirestoreDoc } from '../firebase/firestore'
+interface CreateNotificationInput {
+  users: NotificationUserInput[]
+  title: string
+  content: string
+  date: Date | null
+  type: string
+  status: string
+  hasSeen: boolean
+  createdAt: Date
+}
 
-export const createNotificationDoc = (
-  notification: Omit<NotificationEntity, 'id'>,
-) =>
-  createFirestoreDoc({
-    collectionPath: '/notifications',
-    data: notification,
-  })
-
-export const sendNotification = async (
-  data: Omit<NotificationEntity, 'id' | 'createdAt'>,
+export const createNotificationDoc = async (
+  payload: CreateNotificationInput,
 ) => {
-  await fetch('/api/notifications', {
-    method: 'POST',
-    body: JSON.stringify({
-      type: data.type,
-      title: data.title,
-      content: data.content,
-      date: data.date ?? null,
-      users: data.users,
-      status: data.status,
-    }),
-  })
+  if (!payload.title || !payload.content) {
+    return { error: 'Dados da notificacao invalidos' }
+  }
+
+  return { error: null }
 }

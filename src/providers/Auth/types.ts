@@ -68,7 +68,7 @@ export interface AuthContextType {
 
   /**
    * Cadastro de novo usuário
-   * Cria conta + documento Firestore + envia verificação
+   * Cria conta e dados iniciais do usuário
    */
   createUserWithInternalService: ({
     email,
@@ -90,7 +90,7 @@ export interface AuthContextType {
 
   /**
    * Deleta conta atual (IRREVERSÍVEL)
-   * Remove Firestore + Auth + limpa estado
+   * Remove dados e limpa sessão atual
    */
   deleteUser: () => void
 }

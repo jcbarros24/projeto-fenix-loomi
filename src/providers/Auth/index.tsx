@@ -5,7 +5,7 @@
  * - Estado do usuário logado
  * - Operações de auth (login, logout, cadastro, etc.)
  * - Loading states para UI
- * - Verificação automática de email
+ * - Sincronização entre contexto e serviço mock
  */
 
 'use client'
@@ -22,7 +22,7 @@ import {
   recoverPassword,
   signInWithEmailAndPasswordLocal,
   waitForUser,
-} from '@/services/firebase/auth'
+} from '@/services/auth/mockAuthService'
 import { createNewUserDoc, deleteUserDoc, getUserDoc } from '@/services/user'
 import { UserRole } from '@/types/entities/user'
 import SignUpForm from '@/validations/signUp'
@@ -54,6 +54,7 @@ const AuthProvider = ({ children }: Props) => {
   const initialLoadingObject = {
     onAuthUserChanged: true, // Carregamento inicial do auth state
     loginWithInternalService: false, // Login em progresso
+    loginWithGoogle: false,
     createUserWithInternalService: false, // Cadastro em progresso
     forgotPassword: false, // Recuperação de senha
     updatePassword: false, // Atualização de senha
@@ -70,21 +71,13 @@ const AuthProvider = ({ children }: Props) => {
   // ====================================================================
 
   /**
-   * Monitora mudanças no estado de autenticação
-   * - Verifica email verificado automaticamente
+   * Monitora mudanças no estado de autenticação mock
    * - Atualiza UID do usuário
    * - Controla loading inicial
    */
   useEffect(() => {
     const unsubscribe = waitForUser((user) => {
       if (user) {
-        // 📧 Força logout se email não verificado
-        if (!user.emailVerified) {
-          logout()
-          setUserUid('')
-          setLoading((prev) => ({ ...prev, onAuthUserChanged: false }))
-          return
-        }
         setUserUid(user.uid)
         sessionStorage.setItem('userUid', user.uid)
       } else {
@@ -108,7 +101,6 @@ const AuthProvider = ({ children }: Props) => {
 
   /**
    * Login com email e senha
-   * - Valida email verificado
    * - Mostra toasts de feedback
    * - Atualiza estado automaticamente
    */
@@ -120,35 +112,18 @@ const AuthProvider = ({ children }: Props) => {
       password,
     )
 
-    // 📧 Verifica email verificado
-    if (
-      user &&
-      // Caso não seja necessário verificação de email, esta linha pode ser removida
-      !user.emailVerified
-    ) {
-      // Caso não seja necessário verificação de email, esta linha pode ser removida
-      errorToast('Por favor verifique seu email')
-      await logout()
-      setUserUid('')
-      setLoading((prev) => ({ ...prev, loginWithInternalService: false }))
-      return
-    }
-
     if (user) {
       successToast('Bem vindo de volta!')
       setUserUid(user.uid)
 
-      // 🔧 NOVO: Verificar role do usuário antes de redirecionar
       try {
-        // Buscar dados do usuário no Firestore
         const { user: userData, error: userError } = await getUserDoc(user.uid)
 
         if (userError) {
-          router.push('/cadastro') // Fallback para home
+          router.push('/cadastro')
           return
         }
 
-        // Redirecionar baseado na role
         if (userData?.role === UserRole.ADMIN) {
           router.push('/admin/home')
         } else {
@@ -156,7 +131,7 @@ const AuthProvider = ({ children }: Props) => {
         }
       } catch (error) {
         console.error('Erro ao verificar role:', error)
-        router.push('/home') // Fallback para home
+        router.push('/home')
       }
     } else {
       setUserUid('')
@@ -168,12 +143,10 @@ const AuthProvider = ({ children }: Props) => {
 
   /**
    * Cadastro de novo usuário
-   * - Cria conta no Auth
-   * - Cria documento no Firestore
-   * - Envia verificação de email
+   * - Cria conta no serviço local
+   * - Cria documento em memória
    * - Redireciona para login
    */
-  // Adicione esta versão temporária para debug:
   const createUserWithInternalService = async ({
     email,
     password,
@@ -200,7 +173,7 @@ const AuthProvider = ({ children }: Props) => {
         })
 
         if (docResult.error) {
-          errorToast('Erro no Firestore: ' + docResult.error)
+          errorToast(docResult.error)
         } else {
           successToast('Conta criada com sucesso!')
           router.push('/login')
@@ -234,7 +207,7 @@ const AuthProvider = ({ children }: Props) => {
 
   /**
    * Exclusão de conta (IRREVERSÍVEL)
-   * - Deleta documento Firestore
+   * - Deleta documento em memória
    * - Deleta conta Auth
    * - Limpa estado local
    * - Redireciona para home
@@ -243,13 +216,11 @@ const AuthProvider = ({ children }: Props) => {
     setLoading((prev) => ({ ...prev, deleteUser: true }))
 
     try {
-      // 🗄️ Deletar documento do Firestore primeiro
-      const { error: firestoreError } = await deleteUserDoc(userUid)
-      if (firestoreError) {
-        console.error('Erro ao deletar documento:', firestoreError)
+      const { error: dataError } = await deleteUserDoc(userUid)
+      if (dataError) {
+        console.error('Erro ao deletar documento:', dataError)
       }
 
-      // 🔐 Deletar conta de autenticação
       const { error: authError } = await deleteOwnAccount()
       if (authError) {
         errorToast(authError)
@@ -267,7 +238,7 @@ const AuthProvider = ({ children }: Props) => {
 
   /**
    * Logout completo
-   * - Faz logout no Firebase
+   * - Encerra sessão atual
    * - Limpa estado local
    * - Redireciona para login
    */
@@ -289,11 +260,11 @@ const AuthProvider = ({ children }: Props) => {
   const waitForUserSync = async () => {
     setLoading((prev) => ({ ...prev, onAuthUserChanged: true }))
 
-    await waitForUser((user) => {
-      if (user && !user.emailVerified) {
-        logout()
-        setUserUid('')
-      }
+    await new Promise<void>((resolve) => {
+      const unsubscribe = waitForUser(() => {
+        unsubscribe()
+        resolve()
+      })
     })
 
     setLoading((prev) => ({ ...prev, onAuthUserChanged: false }))

@@ -2,7 +2,7 @@
  * 🔔 HOOK DE TOASTS DA APLICAÇÃO
  *
  * Sistema centralizado de notificações usando react-toastify
- * - Tradução automática de erros Firebase
+ * - Tradução automática de erros de autenticação
  * - Configurações padrão consistentes
  * - Tipos específicos de toast (success, error, loading, etc.)
  * - Mensagens de erro personalizadas da aplicação
@@ -39,13 +39,13 @@ const DEFAULT_CONFIG: ToastConfig = {
 }
 
 // ====================================================================
-// 🔥 TRADUÇÃO DE ERROS FIREBASE
+// 🔥 TRADUÇÃO DE ERROS DE AUTENTICAÇÃO
 // ====================================================================
 
 /**
- * Mapeamento de códigos de erro Firebase para mensagens amigáveis
+ * Mapeamento de códigos de erro para mensagens amigáveis
  */
-const FIREBASE_AUTH_ERRORS: Record<string, string> = {
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
   // 🔑 Autenticação
   'auth/user-not-found': 'Usuário não encontrado',
   'auth/wrong-password': 'Senha incorreta',
@@ -57,8 +57,6 @@ const FIREBASE_AUTH_ERRORS: Record<string, string> = {
     'É necessário fazer login novamente para esta ação',
 
   // 🆕 VARIAÇÕES DO ERRO DE CREDENCIAL INVÁLIDA
-  'Firebase: Error (auth/invalid-credential).': 'Email ou senha incorretos',
-  'Firebase: Error (auth/invalid-credential)': 'Email ou senha incorretos',
   'Error (auth/invalid-credential).': 'Email ou senha incorretos',
   'Error (auth/invalid-credential)': 'Email ou senha incorretos',
   'auth/invalid-credential.': 'Email ou senha incorretos',
@@ -177,7 +175,7 @@ const APP_ERRORS: Record<string, string> = {
 
 /**
  * Mostra toast de erro com tradução automática MELHORADA
- * - Traduz erros Firebase automaticamente
+ * - Traduz erros de autenticação automaticamente
  * - Limpa mensagens de erro complexas
  * - Fallback para mensagem original
  * - Log de debug em desenvolvimento
@@ -196,8 +194,8 @@ export const errorToast = (
 
   // 🔍 Busca tradução diretamente antes de limpar
   const translatedMessage =
-    FIREBASE_AUTH_ERRORS[message] || // Mensagem original
-    FIREBASE_AUTH_ERRORS[message.replace(/\.$/, '')] || // Sem ponto final
+    AUTH_ERROR_MESSAGES[message] || // Mensagem original
+    AUTH_ERROR_MESSAGES[message.replace(/\.$/, '')] || // Sem ponto final
     APP_ERRORS[message] || // Erros da aplicação
     // 🧹 Limpar e normalizar a mensagem de erro
     (() => {
@@ -211,13 +209,6 @@ export const errorToast = (
         cleanMessage = cleanMessage.replace('Erro: ', '')
       }
 
-      if (cleanMessage.includes('Firebase: Error (')) {
-        cleanMessage = cleanMessage
-          .replace('Firebase: Error (', '')
-          .replace(').', '')
-          .replace(')', '')
-      }
-
       if (cleanMessage.includes('Error (')) {
         cleanMessage = cleanMessage
           .replace('Error (', '')
@@ -225,16 +216,12 @@ export const errorToast = (
           .replace('.', '')
       }
 
-      if (cleanMessage.startsWith('Firebase: ')) {
-        cleanMessage = cleanMessage.replace('Firebase: ', '')
-      }
-
       // Log para verificar a mensagem limpa
       console.debug('Mensagem limpa:', cleanMessage)
 
       return (
-        FIREBASE_AUTH_ERRORS[cleanMessage] || // Mensagem limpa
-        FIREBASE_AUTH_ERRORS[cleanMessage + '.'] || // Com ponto final
+        AUTH_ERROR_MESSAGES[cleanMessage] || // Mensagem limpa
+        AUTH_ERROR_MESSAGES[cleanMessage + '.'] || // Com ponto final
         APP_ERRORS[cleanMessage] || // Erros da aplicação limpos
         'Erro desconhecido' // Fallback genérico amigável
       )
@@ -248,8 +235,8 @@ export const errorToast = (
       originalMessage: message,
       translatedMessage,
       foundMapping: !!(
-        FIREBASE_AUTH_ERRORS[message] ||
-        FIREBASE_AUTH_ERRORS[message.replace(/\.$/, '')]
+        AUTH_ERROR_MESSAGES[message] ||
+        AUTH_ERROR_MESSAGES[message.replace(/\.$/, '')]
       ),
     })
   }

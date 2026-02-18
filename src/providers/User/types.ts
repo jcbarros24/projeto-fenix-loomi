@@ -38,7 +38,7 @@ export interface UserContextType {
 
   /**
    * Atualiza dados do usuário atual
-   * Aplica mudanças localmente + Firestore
+   * Aplica mudanças no estado local
    */
   updateUser: (updates: {
     email?: string
@@ -66,7 +66,7 @@ export interface UserContextType {
 
   /**
    * Recarrega dados do usuário atual
-   * Força nova busca no Firestore
+   * Força nova busca no serviço de usuários
    */
   refreshUser: () => Promise<void>
 }

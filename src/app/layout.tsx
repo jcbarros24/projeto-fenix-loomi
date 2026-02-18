@@ -5,7 +5,7 @@
  * - Providers de autenticação e dados
  * - Configuração de fonts e estilos globais
  * - Sistema de notificações (Toast)
- * - Inicialização do Firebase
+ * - Inicialização dos providers da aplicação
  * - Query Client para cache de dados
  */
 
@@ -18,6 +18,7 @@ import { ToastContainer } from 'react-toastify'
 import AuthProvider from '@/providers/Auth'
 import QueryClientProviderApp from '@/providers/QueryClientApp'
 import UserProvider from '@/providers/User'
+import AuthHydrator from '@/shared/components/auth-hydrator'
 
 // ====================================================================
 // 🎨 CONFIGURAÇÃO DE FONTES
@@ -41,9 +42,9 @@ const montserrat = Montserrat({
  * Metadados SEO e configurações da página
  */
 export const metadata: Metadata = {
-  title: 'Firebase Boilerplate',
-  description: 'Firebase boilerplate to get started quickly',
-  keywords: ['Firebase', 'Next.js', 'React', 'TypeScript', 'Boilerplate'],
+  title: 'Frontend Boilerplate',
+  description: 'Boilerplate para iniciar projetos Next.js rapidamente',
+  keywords: ['Next.js', 'React', 'TypeScript', 'Boilerplate'],
   authors: [{ name: 'José Carlos Paiva Santos' }],
 }
 
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
  * - Providers globais configurados
  * - Sistema de toasts para notificações
  * - Fonts otimizadas carregadas
- * - Firebase inicializado
+ * - Serviços internos inicializados
  * - CSS global aplicado
  *
  * @param children - Páginas da aplicação
@@ -81,6 +82,7 @@ export default function RootLayout({
           QueryClient > Auth > User > App Content
         */}
         <QueryClientProviderApp>
+          <AuthHydrator />
           <AuthProvider>
             <UserProvider>
               {/* 📱 Conteúdo principal da aplicação */}

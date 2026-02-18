@@ -74,7 +74,7 @@ const UserProvider = ({ children }: Props) => {
   // ====================================================================
 
   /**
-   * Carrega dados do usuário atual do Firestore
+   * Carrega dados do usuário atual
    */
   const fetchCurrentUser = async () => {
     if (!userUid) return
@@ -128,7 +128,7 @@ const UserProvider = ({ children }: Props) => {
 
   /**
    * Atualiza dados do usuário atual
-   * - Salva no Firestore
+   * - Salva no serviço de dados
    * - Atualiza estado local
    */
   const updateUser = async (updates: {
@@ -169,7 +169,7 @@ const UserProvider = ({ children }: Props) => {
 
   /**
    * Atualiza role de usuário específico (admin only)
-   * - Atualiza no Firestore
+   * - Atualiza no serviço de dados
    * - Atualiza nas listas locais
    */
   const updateUserRole = async (uid: string, role: UserRole) => {
