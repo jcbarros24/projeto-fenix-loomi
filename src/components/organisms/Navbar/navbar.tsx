@@ -18,10 +18,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import useAuth from '@/hooks/useAuth' // Seu hook de autenticação
-import useUser from '@/hooks/useUser'
 import { cn } from '@/lib/utils'
-import { UserRole } from '@/types/entities/user' // Sua entidade de usuário
+import { useAuthStore } from '@/stores/auth.store'
 
 import { NavbarProps, NavItem } from './types'
 
@@ -49,60 +47,47 @@ function NavLinks({ items, pathname }: { items: NavItem[]; pathname: string }) {
 
 // Menu de Ações (Login/Logout/Perfil)
 function UserMenu() {
-  const { logoutUser, loading } = useAuth()
-  const { currentUser } = useUser()
-  const user = currentUser
+  const { user, logout, isAuthenticated } = useAuthStore((state) => ({
+    user: state.user,
+    logout: state.logout,
+    isAuthenticated: state.isAuthenticated,
+  }))
 
   // Se não estiver logado, não renderiza nada
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return null
   }
 
-  // Se for ADMIN, renderiza um botão simples de Logout
-  if (user.role === UserRole.ADMIN) {
-    return (
-      <Button variant="outline" onClick={logoutUser} disabled={loading.logout}>
-        {loading.logout ? 'Saindo...' : 'Sair'}
-      </Button>
-    )
-  }
-
-  // Se for USER, renderiza o Dropdown com Avatar
-  if (user.role === UserRole.USER) {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
-              {/* <AvatarImage src={user.photoURL || ''} alt={user.name || ''} /> */}
-              <AvatarFallback className="bg-blue-300">
-                {user.name ? user.name.charAt(0).toUpperCase() : <UserIcon />}
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{user.name}</p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {user.email}
-              </p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logoutUser}>
-            <div className="flex w-full cursor-pointer items-center gap-2 rounded-lg hover:bg-blue-50">
-              <LogoutIcon fontSize="small" />
-              <span>Sair</span>
-            </div>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    )
-  }
-
-  return null
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="bg-blue-300">
+              {user.name ? user.name.charAt(0).toUpperCase() : <UserIcon />}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logout}>
+          <div className="flex w-full cursor-pointer items-center gap-2 rounded-lg hover:bg-blue-50">
+            <LogoutIcon fontSize="small" />
+            <span>Sair</span>
+          </div>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 }
 
 // --- Componente Principal da Navbar ---

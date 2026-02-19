@@ -1,17 +1,12 @@
-import { Navbar } from '@/components/organisms/Navbar/navbar'
-
-const authMenuItems = [
-  {
-    label: 'Home',
-    href: '/home',
-  },
-]
+import { Sidebar } from '@/components/organisms/Sidebar/sidebar'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="flex h-screen w-full flex-col items-center justify-center gap-5">
-      <Navbar navItems={authMenuItems} />
-      {children}
-    </main>
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar />
+      <main className="min-h-screen px-6 pb-8 pt-20 lg:pl-72 lg:pt-8">
+        {children}
+      </main>
+    </div>
   )
 }

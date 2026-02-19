@@ -9,7 +9,7 @@ export default function DashboardPage() {
   }))
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 py-12">
+    <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <header className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-sm text-gray-500">

@@ -42,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
         <div className="mb-6 space-y-2 text-center">
           <h1 className="text-2xl font-semibold text-gray-900">
@@ -55,7 +55,10 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700" htmlFor="email">
+            <label
+              className="text-sm font-medium text-gray-700"
+              htmlFor="email"
+            >
               Email
             </label>
             <input

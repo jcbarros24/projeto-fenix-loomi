@@ -1,14 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const PUBLIC_PATHS = ['/login', '/', '/cadastro', '/recuperar-senha']
-const PROTECTED_PREFIXES = ['/dashboard', '/home', '/admin']
-
-const isPublicPath = (pathname: string) => {
-  if (PUBLIC_PATHS.includes(pathname)) return true
-
-  return false
-}
+const PUBLIC_PATHS = ['/', '/login']
+const PROTECTED_PREFIXES = ['/dashboard']
 
 const isProtectedPath = (pathname: string) =>
   PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
@@ -23,7 +17,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  if (isPublicPath(pathname) || !isProtectedPath(pathname)) {
+  if (PUBLIC_PATHS.includes(pathname) || !isProtectedPath(pathname)) {
     return NextResponse.next()
   }
 

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import { getCookie, removeCookie, setCookie } from '@/lib/cookies'
 import { apiFetch, ApiError, setUnauthorizedHandler } from '@/services/api'
-import { LoginResponse, User } from '@/types/auth'
+import { LoginResponse, User, UserState } from '@/types/auth'
 
 type AuthState = {
   user: User | null
@@ -63,6 +63,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const fallbackUser: User = {
         id: `mock-${email.toLowerCase()}`,
         name: email.split('@')[0] || 'Usuario',
+        state: UserState.PENDING_CONFIRMATION,
         email,
       }
 

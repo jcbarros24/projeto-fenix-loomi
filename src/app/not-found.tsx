@@ -1,43 +1,21 @@
-'use client'
-
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-
-import useAuth from '@/hooks/useAuth'
-import useUser from '@/hooks/useUser'
-import { UserRole } from '@/types/entities/user'
+import Link from 'next/link'
 
 export default function NotFoundPage() {
-  const router = useRouter()
-  const { userUid } = useAuth()
-  const { currentUser } = useUser()
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!userUid) {
-        router.replace('/login')
-      } else if (currentUser?.role === UserRole.ADMIN) {
-        router.replace('/admin/home')
-      } else {
-        router.replace('/home')
-      }
-    }, 2000) // 2 segundos para mostrar a mensagem
-
-    return () => clearTimeout(timer)
-  }, [userUid, currentUser, router])
-
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6">
       <div className="text-center">
-        <h1 className="mb-4 text-3xl font-bold text-red-600">
+        <h1 className="mb-4 text-3xl font-semibold text-gray-900">
           404 - Página não encontrada
         </h1>
-        <p className="mb-2 text-lg text-gray-700">
+        <p className="mb-6 text-sm text-gray-600">
           Não encontramos a página que você tentou acessar.
         </p>
-        <p className="text-gray-500">
-          Estamos redirecionando você para a área correta...
-        </p>
+        <Link
+          href="/login"
+          className="inline-flex rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+        >
+          Voltar para o login
+        </Link>
       </div>
     </div>
   )

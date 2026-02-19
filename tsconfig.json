@@ -22,39 +22,6 @@
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ], // Simplificado
-      "@atoms/*": [
-        "src/components/atoms/*"
-      ],
-      "@molecules/*": [
-        "src/components/molecules/*"
-      ],
-      "@organisms/*": [
-        "src/components/organisms/*"
-      ],
-      "@templates/*": [
-        "src/components/templates/*"
-      ],
-      "@containers/*": [
-        "src/containers/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@providers/*": [
-        "src/providers/*"
-      ], // Movido para raiz se não for específico de store
-      "@services/*": [
-        "src/services/*"
-      ], // Movido para raiz
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
       ]
     },
     "plugins": [
