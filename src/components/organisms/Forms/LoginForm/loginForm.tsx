@@ -1,15 +1,18 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import InputField from '@/components/molecules/InputField/inputField'
+import { useAuthStore } from '@/stores/auth.store'
 import SignInFormSchema, { SignInFormData } from '@/validations/signIn'
-import { Button } from '@atoms/Button/button'
-import useAuth from '@hooks/useAuth'
+import { Button } from '@/components/atoms/Button/button'
 
 export function LoginForm() {
-  const { loginWithInternalService, loading } = useAuth()
+  const login = useAuthStore((state) => state.login)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const {
     handleSubmit,
@@ -20,8 +23,18 @@ export function LoginForm() {
     resolver: zodResolver(SignInFormSchema),
   })
 
-  const handleSubmitForm = (data: SignInFormData) => {
-    loginWithInternalService(data.email, data.password)
+  const handleSubmitForm = async (data: SignInFormData) => {
+    setErrorMessage(null)
+    setIsSubmitting(true)
+    try {
+      await login(data.email, data.password)
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Erro ao fazer login',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -36,7 +49,7 @@ export function LoginForm() {
         type="text"
         placeholder="seu@email.com"
         required
-        disabled={loading.loginWithInternalService}
+        disabled={isSubmitting}
         className="transition-all duration-200"
       />
 
@@ -47,14 +60,17 @@ export function LoginForm() {
         type="password"
         placeholder="Digite sua senha"
         required
-        disabled={loading.loginWithInternalService}
+        disabled={isSubmitting}
         className="transition-all duration-200"
       />
+      {errorMessage && (
+        <p className="text-sm text-error-600">{errorMessage}</p>
+      )}
       <Button
         type="submit"
         className="mt-4"
-        loading={loading.loginWithInternalService}
-        disabled={!isValid || loading.loginWithInternalService}
+        loading={isSubmitting}
+        disabled={!isValid || isSubmitting}
       >
         Entrar
       </Button>
