@@ -1,6 +1,4 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+type ClassValue = string | null | undefined | false
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export const cn = (...classes: ClassValue[]) =>
+  classes.filter(Boolean).join(' ')

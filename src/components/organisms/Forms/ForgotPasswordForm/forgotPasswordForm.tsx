@@ -1,19 +1,19 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/atoms/Button/button'
 import InputField from '@/components/molecules/InputField/inputField'
-import { successToast } from '@/hooks/useAppToast'
-import useAuth from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import ForgotPasswordSchema, {
   ForgotPasswordFormData,
 } from '@/validations/forgotPassword'
 
 export function ForgotPasswordForm() {
-  const { forgotPassword, loading } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [feedback, setFeedback] = useState<string | null>(null)
 
   const {
     handleSubmit,
@@ -24,14 +24,13 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(ForgotPasswordSchema),
   })
 
-  const handleSubmitForm = (data: ForgotPasswordFormData) => {
-    forgotPassword(data.email)
-    successToast(
+  const handleSubmitForm = async (_data: ForgotPasswordFormData) => {
+    setIsSubmitting(true)
+    setFeedback(
       'Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.',
     )
+    setIsSubmitting(false)
   }
-
-  const isFormLoading = loading.forgotPassword
 
   return (
     <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
@@ -42,8 +41,9 @@ export function ForgotPasswordForm() {
         type="text"
         placeholder="seu@email.com"
         required
-        disabled={isFormLoading}
+        disabled={isSubmitting}
       />
+      {feedback && <p className="text-sm text-gray-600">{feedback}</p>}
 
       <Button
         type="submit"
@@ -52,10 +52,10 @@ export function ForgotPasswordForm() {
           'w-full font-semibold',
           'bg-gray-800 hover:bg-gray-900 focus:ring-gray-500',
         )}
-        loading={isFormLoading}
-        disabled={isFormLoading || !isValid}
+        loading={isSubmitting}
+        disabled={isSubmitting || !isValid}
       >
-        {isFormLoading ? 'Enviando...' : 'Enviar Link'}
+        {isSubmitting ? 'Enviando...' : 'Enviar Link'}
       </Button>
     </form>
   )
