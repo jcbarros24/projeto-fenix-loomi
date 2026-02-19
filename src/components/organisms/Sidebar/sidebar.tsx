@@ -68,7 +68,7 @@ export function Sidebar() {
 
   return (
     <>
-      <div className="fixed top-0 z-40 flex h-14 w-full items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden">
+      <div className="fixed top-0 z-40 flex h-14 w-full items-center justify-between border-b border-gray-200 bg-slate-800 px-4 lg:hidden">
         <div className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-900 text-xs font-semibold text-white">
             NL

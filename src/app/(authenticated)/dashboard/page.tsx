@@ -3,21 +3,19 @@
 import { useAuthStore } from '@/stores/auth.store'
 
 export default function DashboardPage() {
-  const { user, logout } = useAuthStore((state) => ({
-    user: state.user,
-    logout: state.logout,
-  }))
+  const user = useAuthStore((state) => state.user)
+  const logout = useAuthStore((state) => state.logout)
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <header className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <header className="rounded-2xl border border-gray-200 p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-sm text-gray-500">
           Bem-vindo{user?.name ? `, ${user.name}` : ''}.
         </p>
       </header>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-gray-200 p-6 shadow-sm">
         <p className="text-sm text-gray-600">
           Conteudo protegido. Aqui entra o consumo da API legada.
         </p>

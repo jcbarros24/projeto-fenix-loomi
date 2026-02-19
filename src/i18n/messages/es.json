@@ -1,0 +1,20 @@
+{
+  "login": {
+    "title": "Acceso",
+    "subtitle": "Ingresa tus credenciales para acceder a tu cuenta.",
+    "emailLabel": "Correo",
+    "passwordLabel": "Contraseña",
+    "remember": "Recordar mi usuario",
+    "forgot": "Olvidé mi contraseña",
+    "submit": "Entrar",
+    "submitting": "Ingresando...",
+    "help": "Ayuda",
+    "profile": "Mi perfil",
+    "language": "Idioma"
+  },
+  "language": {
+    "pt": "Portugués (Brasil)",
+    "en": "Inglés",
+    "es": "Español"
+  }
+}
