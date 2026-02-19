@@ -10,6 +10,10 @@ module.exports = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        'background-original': 'var(--background-original)',
+        blue: {
+          primary: '#1876D2',
+        },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -128,6 +132,8 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
         gray: {
+          border: '#737677',
+          primary: '#E3E3E3',
           50: 'hsl(var(--gray-50))',
           100: 'hsl(var(--gray-100))',
           200: 'hsl(var(--gray-200))',
@@ -145,6 +151,12 @@ module.exports = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-space-grotesk)', 'var(--font-inter)', 'sans-serif'],
+        'space-grotesk': ['var(--font-space-grotesk)', 'sans-serif'],
+        inter: ['var(--font-inter)', 'sans-serif'],
       },
     },
   },

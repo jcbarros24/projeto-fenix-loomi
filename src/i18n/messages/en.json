@@ -1,0 +1,20 @@
+{
+  "login": {
+    "title": "Login",
+    "subtitle": "Enter your credentials to access your account.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "remember": "Remember my user",
+    "forgot": "Forgot my password",
+    "submit": "Sign in",
+    "submitting": "Signing in...",
+    "help": "Help",
+    "profile": "My profile",
+    "language": "Language"
+  },
+  "language": {
+    "pt": "Portuguese (Brazil)",
+    "en": "English",
+    "es": "Spanish"
+  }
+}

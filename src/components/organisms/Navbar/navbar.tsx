@@ -47,11 +47,9 @@ function NavLinks({ items, pathname }: { items: NavItem[]; pathname: string }) {
 
 // Menu de Ações (Login/Logout/Perfil)
 function UserMenu() {
-  const { user, logout, isAuthenticated } = useAuthStore((state) => ({
-    user: state.user,
-    logout: state.logout,
-    isAuthenticated: state.isAuthenticated,
-  }))
+  const user = useAuthStore((state) => state.user)
+  const logout = useAuthStore((state) => state.logout)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   // Se não estiver logado, não renderiza nada
   if (!isAuthenticated || !user) {
