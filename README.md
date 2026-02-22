@@ -27,6 +27,9 @@ Sistema de gestão com autenticação fictícia, dashboard de KPIs, gestão de t
 
 <br />
 
+## Relatório de Progresso
+➡️ **[PROGRESS.md](./PROGRESS.md)** — backlog, priorização, dificuldades e próximos passos.
+
 ## Índice
 
 - [Stack e tecnologias](#stack-e-tecnologias)
