@@ -64,7 +64,7 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          'fixed left-0 top-0 z-50 flex h-screen flex-col rounded-r-2xl bg-[#20273E] pb-8 pt-6 shadow-xl transition-all duration-300',
+          'fixed left-0 top-0 z-50 flex h-screen flex-col rounded-r-2xl bg-[#20273E] pb-8 pt-6 shadow-card-fade transition-all duration-300',
           isExpanded ? 'lg:w-64' : 'lg:w-28',
           isMobileOpen ? 'translate-x-0 w-72' : '-translate-x-full w-72',
           'lg:translate-x-0',
@@ -106,7 +106,7 @@ export default function Sidebar() {
                       : 'none',
                   }}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-8 py-3 text-white transition-colors hover:bg-[#20273E]',
+                    'flex items-center gap-3 rounded-lg px-8 py-3 text-white transition-colors hover:bg-white/10',
                     isActive ? 'bg-[#1876D2] text-white' : 'bg-white/5',
                     isExpanded || isMobileOpen ? 'w-[90%]' : 'w-12 justify-center',
                   )}

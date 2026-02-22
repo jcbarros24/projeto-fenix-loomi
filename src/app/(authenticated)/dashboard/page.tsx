@@ -247,9 +247,9 @@ export default function DashboardPage() {
     [selectedTrend],
   )
 
-  const defaultConversionMonths = useMemo(
-    () => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-    [],
+  const conversionBarLabels = useMemo(
+    () => dashboardData?.kpisTrend?.labels ?? ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    [dashboardData?.kpisTrend?.labels],
   )
 
   const areaSeries = useMemo(
@@ -303,32 +303,22 @@ export default function DashboardPage() {
   )
 
   const conversionBarData = useMemo(() => {
-    const data = dashboardData?.activeClients?.data ?? []
-    return data.map((item) => item.monthValue ?? 0)
+    const data = dashboardData?.kpisTrend?.conversionTrend?.data
+    return Array.isArray(data) ? data : []
   }, [dashboardData])
 
   const barSeries = useMemo(
     () => [
       {
-        name: t('newClients'),
+        name: dashboardData?.kpisTrend?.conversionTrend?.name ?? t('conversion'),
         data:
           conversionBarData.length > 0
             ? conversionBarData
-            : [95, 72, 105, 40, 63, 78],
+            : [50, 55, 53, 58, 56, 54, 60, 59, 63, 62, 67, 70],
       },
     ],
-    [conversionBarData, t],
+    [conversionBarData, dashboardData?.kpisTrend?.conversionTrend?.name, t],
   )
-
-  const totalNewCustomers = useMemo(() => {
-    const data = barSeries[0]?.data ?? []
-    return Math.round(
-      data.reduce(
-        (sum, value) => sum + (typeof value === 'number' ? value : 0),
-        0,
-      ),
-    )
-  }, [barSeries])
 
   const conversionRate = useMemo(() => {
     const value = dashboardData?.kpisResume?.conversion?.valor
@@ -355,14 +345,13 @@ export default function DashboardPage() {
         strokeDashArray: 4,
       },
       xaxis: {
-        categories: defaultConversionMonths,
+        categories: conversionBarLabels,
       },
-      yaxis: { labels: { formatter: (val: number) => `${Math.round(val)}` } },
+      yaxis: { labels: { formatter: (val: number) => `${Math.round(val)}%` } },
       tooltip: {
         theme: 'dark',
         y: {
-          formatter: (val: number) =>
-            `${Math.round(val)} ${t('newClients').toLowerCase()}`,
+          formatter: (val: number) => `${val.toFixed(1)}% ${t('conversion').toLowerCase()}`,
         },
       },
       fill: {
@@ -376,13 +365,13 @@ export default function DashboardPage() {
         },
       },
     }),
-    [defaultConversionMonths, t],
+    [conversionBarLabels, t],
   )
 
   return (
     <div className="flex w-full flex-col gap-6 pb-10">
       <div className="grid gap-6 min-[1000px]:grid-cols-[2fr_1fr]">
-        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-md font-sans font-semibold text-white">
               {t('kpiEvolution')}
@@ -418,7 +407,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-1 text-sm font-semibold text-white">
               {t('conversionRate')}
@@ -431,7 +420,7 @@ export default function DashboardPage() {
                   : '--'}
               </div>
               <div>
-                {totalNewCustomers} {t('clients')}
+                {(dashboardData?.activeClients?.data?.length ?? 0)} {t('clients')}
               </div>
             </div>
           </div>
@@ -446,7 +435,7 @@ export default function DashboardPage() {
         </section>
       </div>
 
-      <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+      <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-sm font-semibold text-white">
             {t('mapTitle')}
@@ -462,7 +451,7 @@ export default function DashboardPage() {
         </div>
         <div
           ref={mapRef}
-          className="relative mt-4 h-72 w-full overflow-hidden rounded-2xl border border-white/10"
+          className="relative mt-4 h-72 w-full overflow-hidden rounded-2xl border border-white/10 shadow-card-fade"
         >
           <div
             ref={tooltipRef}

@@ -69,7 +69,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   })
 
   return (
-    <div className="min-h-screen w-full bg-background">
+    <div className="min-h-screen w-full !bg-[#0b0d1c]">
       <Sidebar />
 
       <div
@@ -78,7 +78,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
           isExpanded ? 'lg:pl-64' : 'lg:pl-28',
         )}
       >
-        <header className="sticky top-0 z-30 flex w-full items-center justify-between bg-[#20273E] py-4 sm:px-6">
+        <header className="sticky top-0 z-30 flex w-full items-center justify-between bg-[#20273E] py-4 shadow-card-fade sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"

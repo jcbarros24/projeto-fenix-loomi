@@ -201,15 +201,24 @@ export default function LoginPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="min-w-[180px] border-white/10 bg-[#28242429] text-gray-primary"
+            className="min-w-[180px] !border-white/10 !bg-[#20273E] !text-slate-200 [&_[data-highlighted]]:!bg-white/10"
           >
-            <DropdownMenuItem onClick={() => handleLocaleChange('pt')}>
+            <DropdownMenuItem
+              onClick={() => handleLocaleChange('pt')}
+              className="!text-slate-200 focus:!bg-white/10 focus:!text-white"
+            >
               {tLanguage('pt')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleLocaleChange('en')}>
+            <DropdownMenuItem
+              onClick={() => handleLocaleChange('en')}
+              className="!text-slate-200 focus:!bg-white/10 focus:!text-white"
+            >
               {tLanguage('en')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleLocaleChange('es')}>
+            <DropdownMenuItem
+              onClick={() => handleLocaleChange('es')}
+              className="!text-slate-200 focus:!bg-white/10 focus:!text-white"
+            >
               {tLanguage('es')}
             </DropdownMenuItem>
           </DropdownMenuContent>

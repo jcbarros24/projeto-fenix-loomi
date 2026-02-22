@@ -21,10 +21,13 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Projeto Fenix Loomi',
-  description: 'Fenix Loomi',
+  title: 'fenix-loomi',
+  description: 'fenix-loomi',
   keywords: ['Next.js', 'React', 'TypeScript', 'Loomi'],
   authors: [{ name: 'José Carlos Barros' }],
+  icons: {
+    icon: '/images/nortus-logo.png',
+  },
 }
 
 export default async function RootLayout({
