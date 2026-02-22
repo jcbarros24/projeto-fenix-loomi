@@ -1,21 +1,43 @@
-import Link from 'next/link'
+'use client'
+
+import { getCookie } from '@/lib/cookies'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+const ACCESS_TOKEN_KEY = 'access_token'
+const REDIRECT_DELAY_MS = 5000
 
 export default function NotFoundPage() {
+  const router = useRouter()
+  const [countdown, setCountdown] = useState(REDIRECT_DELAY_MS / 1000)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval)
+          const token = getCookie(ACCESS_TOKEN_KEY)
+          router.replace(token ? '/dashboard' : '/login')
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [router])
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[#0b0d1c] px-6">
       <div className="text-center">
-        <h1 className="mb-4 text-3xl font-semibold text-gray-900">
+        <h1 className="mb-4 text-3xl font-semibold text-white">
           404 - Página não encontrada
         </h1>
-        <p className="mb-6 text-sm text-gray-600">
+        <p className="mb-6 text-sm text-slate-400">
           Não encontramos a página que você tentou acessar.
         </p>
-        <Link
-          href="/login"
-          className="inline-flex rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
-        >
-          Voltar para o login
-        </Link>
+        <p className="text-xs text-slate-500">
+          Redirecionando em {countdown}s...
+        </p>
       </div>
     </div>
   )

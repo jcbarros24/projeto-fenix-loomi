@@ -66,7 +66,7 @@ export const apiFetch = async <T>(path: string, options: ApiOptions = {}) => {
   const isJson = contentType.includes('application/json')
   const data = isJson ? await response.json() : await response.text()
 
-  if (response.status === 401) {
+  if (response.status === 401 && !options.skipAuth) {
     onUnauthorized?.()
   }
 

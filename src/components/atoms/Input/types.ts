@@ -9,4 +9,7 @@ export interface InputProps
   icon?: ReactNode
   iconPosition?: 'left' | 'right'
   asChild?: boolean
+  description?: string
+  label?: string
+  required?: boolean
 }
