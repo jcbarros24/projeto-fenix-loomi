@@ -4,6 +4,29 @@ Sistema de gestão com autenticação fictícia, dashboard de KPIs, gestão de t
 
 ---
 
+
+<div align="center">
+
+<a href="https://github.com/jcbarros24/projeto-fenix-loomi" target="_blank">
+  <img src="https://img.shields.io/badge/Reposit%C3%B3rio-GitHub-black?logo=github&style=for-the-badge" alt="Repositório GitHub"/>
+</a>
+&ensp;
+<a href="https://fenix-loomi.vercel.app" target="_blank">
+  <img src="https://img.shields.io/badge/Deploy-Vercel-000?logo=vercel&style=for-the-badge" alt="Deploy Vercel"/>
+</a>
+&ensp;
+<a href="https://github.com/users/jcbarros24/projects/2" target="_blank">
+  <img src="https://img.shields.io/badge/Board-Projects-blue?logo=github&style=for-the-badge" alt="GitHub Projects"/>
+</a>
+&ensp;
+<a href="https://nortus-challenge.api.stage.loomi.com.br/docs" target="_blank">
+  <img src="https://img.shields.io/badge/Swagger%20API-base-green?logo=swagger&style=for-the-badge" alt="Swagger API"/>
+</a>
+
+</div>
+
+<br />
+
 ## Índice
 
 - [Stack e tecnologias](#stack-e-tecnologias)
