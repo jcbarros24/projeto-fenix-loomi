@@ -5,6 +5,7 @@ import Input from '@/components/atoms/Input/input'
 import InputCurrency from '@/components/atoms/InputCurrency/inputCurrency'
 import InputMask from '@/components/atoms/InputMask/inputMask'
 import { Label } from '@/components/atoms/Label/label'
+import { cn } from '@/lib/utils'
 
 import { InputFieldProps } from './types'
 
@@ -26,13 +27,14 @@ const InputField = <T extends FieldValues>({
       control={control}
       render={({ field, fieldState: { error } }) => {
         const isDark = props.variant === 'dark'
+        const isModal = props.variant === 'modal'
         const activeVariant = error
-          ? isDark
-            ? 'dark'
+          ? isDark || isModal
+            ? props.variant
             : 'error'
           : props.variant
         const darkErrorClass =
-          error && isDark
+          error && (isDark || isModal)
             ? 'border-error-300 focus-within:border-error-300 focus-within:ring-error-50/30'
             : undefined
 
@@ -63,7 +65,7 @@ const InputField = <T extends FieldValues>({
                     variant={
                       error
                         ? 'error'
-                        : props.variant === 'dark'
+                        : props.variant === 'dark' || props.variant === 'modal'
                           ? undefined
                           : props.variant
                     }
@@ -79,7 +81,13 @@ const InputField = <T extends FieldValues>({
                     value={field.value || ''}
                     mask={mask}
                     maskType={maskType}
-                    variant={error ? 'error' : props.variant}
+                    variant={
+                      error
+                        ? 'error'
+                        : props.variant === 'modal'
+                          ? undefined
+                          : props.variant
+                    }
                   />
                 )
               }
@@ -92,7 +100,7 @@ const InputField = <T extends FieldValues>({
                   label={label}
                   required={required}
                   variant={activeVariant}
-                  className={darkErrorClass}
+                  className={cn(props.className, darkErrorClass)}
                 />
               )
             })()}

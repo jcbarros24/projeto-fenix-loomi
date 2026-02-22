@@ -15,5 +15,5 @@ export interface InputFieldProps<T extends FieldValues>
   label?: string
   required?: boolean
   currency?: string
-  variant?: 'default' | 'dark' | 'error' | 'success'
+  variant?: 'default' | 'dark' | 'modal' | 'error' | 'success'
 }

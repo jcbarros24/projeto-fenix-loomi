@@ -1,23 +1,136 @@
 'use client'
 
+import MenuIcon from '@mui/icons-material/Menu'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { PlusIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
-import { Sidebar } from '@/components/organisms/Sidebar/sidebar'
+import { CreateTicketModal } from '@/components/organisms/Modals/CreateTicketModal/createTicketModal'
+import Sidebar from '@/components/organisms/Sidebar/sidebar'
+import { Button } from '@/components/ui/button'
+import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext'
+import { cn } from '@/lib/utils'
+import { apiFetch } from '@/services/api'
+import { Ticket, TicketsApiResponse } from '@/types/ticket'
+
+function getNextTicketId(tickets: Ticket[]): string {
+  const numbers = tickets
+    .map((t) => {
+      const match = t.ticketId.match(/TK-?(\d+)/i)
+      return match ? parseInt(match[1], 10) : 0
+    })
+    .filter((n) => !Number.isNaN(n))
+  const max = numbers.length > 0 ? Math.max(...numbers) : 0
+  return `TK${max + 1}`
+}
+
+function AuthenticatedShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const { isExpanded, toggleMobile } = useSidebar()
+  const queryClient = useQueryClient()
+  const [isCreateTicketOpen, setIsCreateTicketOpen] = useState(false)
+  const pageTitle = `${pathname.split('/')[1]?.charAt(0).toUpperCase() ?? ''}${pathname.split('/')[1]?.slice(1).toLowerCase() ?? ''}`
+  const isTicketsRoute = pathname === '/tickets'
+
+  const { data: ticketsData } = useQuery({
+    queryKey: ['tickets'],
+    queryFn: () => apiFetch<TicketsApiResponse>('/tickets'),
+    enabled: isCreateTicketOpen,
+  })
+  const nextTicketId = useMemo(
+    () => getNextTicketId(ticketsData?.data ?? []),
+    [ticketsData?.data],
+  )
+
+  const createTicketMutation = useMutation({
+    mutationFn: async (payload: {
+      ticketId: string
+      priority: string
+      client: string
+      email: string
+      subject: string
+      status: string
+      responsible: string
+    }) => {
+      const response = await apiFetch('/tickets', {
+        method: 'POST',
+        body: payload,
+      })
+      return response
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['tickets'] })
+      toast.success('Ticket criado com sucesso!')
+      setIsCreateTicketOpen(false)
+    },
+    onError: (error) => {
+      toast.error('Não foi possível criar o ticket.', {
+        description: error instanceof Error ? error.message : 'Erro ao criar ticket',
+      })
+    },
+  })
+
+  return (
+    <div className="min-h-screen w-full bg-background">
+      <Sidebar />
+
+      <div
+        className={cn(
+          'w-full transition-[padding] duration-300',
+          isExpanded ? 'lg:pl-64' : 'lg:pl-28',
+        )}
+      >
+        <header className="sticky top-0 z-30 flex w-full items-center justify-between bg-[#20273E] py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="rounded-md p-2 text-white/80 transition hover:bg-white/10 hover:text-white lg:hidden"
+              onClick={toggleMobile}
+              aria-label="Abrir menu lateral"
+            >
+              <MenuIcon fontSize="small" />
+            </button>
+            <p className="font-sans font-semibold text-gray-primary">
+              {pageTitle}
+            </p>
+          </div>
+
+          {isTicketsRoute && (
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setIsCreateTicketOpen(true)}
+              style={{ boxShadow: '0 0 10px 0 rgba(24, 118, 210, 0.5)' }}
+            >
+              <PlusIcon /> Novo Ticket
+            </Button>
+          )}
+        </header>
+
+        <main className="min-h-[calc(100vh-64px)] w-full px-4 pb-8 pt-6 sm:px-6">
+          {children}
+        </main>
+      </div>
+
+      <CreateTicketModal
+        isOpen={isCreateTicketOpen}
+        setIsOpen={setIsCreateTicketOpen}
+        nextTicketId={nextTicketId}
+        onSubmit={async (payload) => {
+          await createTicketMutation.mutateAsync(payload)
+        }}
+        loading={createTicketMutation.isPending}
+      />
+    </div>
+  )
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="items-center bg-slate-800 px-6 py-6 lg:pl-72">
-        <p className="text-gray-primary font-sans font-semibold">
-          {pathname.split('/')[1]?.charAt(0).toUpperCase() +
-            pathname.split('/')[1]?.slice(1).toLowerCase()}
-        </p>
-      </div>
-      <main className="min-h-screen px-6 pb-8 pt-20 lg:pl-72 lg:pt-8">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <AuthenticatedShell>{children}</AuthenticatedShell>
+    </SidebarProvider>
   )
 }

@@ -3,8 +3,10 @@ import { getLocale, getMessages } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
 // eslint-disable-next-line camelcase
 import { Inter, Space_Grotesk } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 import AuthHydrator from '@/shared/components/auth-hydrator'
+import QueryProvider from '@/shared/components/query-provider'
 
 import './globals.css'
 
@@ -38,8 +40,11 @@ export default async function RootLayout({
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="font-sans antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthHydrator />
-          <main id="root">{children}</main>
+          <QueryProvider>
+            <AuthHydrator />
+            <main id="root">{children}</main>
+            <Toaster richColors theme="dark" position="top-right" />
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>
