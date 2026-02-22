@@ -55,18 +55,18 @@ Sistema de gestão com autenticação fictícia, dashboard de KPIs, gestão de t
 - Revisão de tipos e validações Zod
 
 **Exemplos de prompts:**
-1. "Quero colocar o cookie HttpOnly e verificar ao entrar na plataforma"
-2. "Prune componentes não utilizados e organize como um dev senior"
-3. "Como fazemos pra pular validações do HTML e usar só Zod?"
-4. "Adicione tradução para map.category.entertainment"
-5. "O middleware não está rodando, os console.logs não aparecem"
+1. "Prune componentes não utilizados e organize como um dev senior"
+2. "Centralize as queries em hooks e faça as páginas e layout usarem esses hooks"
+3. "Adicione as traduções para o next-intl"
+4. "O middleware não está rodando, coloque console.logs para investigar"
+5. Faça o AuthHydrator popular o store no mount e o AuthBlocker bloquear nas rotas protegidas
 
 **O que ajustei manualmente depois:**
-- Reverti a abordagem HttpOnly porque o desafio exige explicitamente token em cookies + usuário em LocalStorage
+- Confirmei quais componentes eram realmente não usados antes de remover
+- Defini quais queries centralizar (useTickets, useDashboardData, useMapLocations, useChat, useSimulatorPlanos, etc.)
+- Revisei as chaves de tradução para manter consistência entre pt, en e es
 - Corrigi o matcher do middleware (regex não disparava; mudei para matcher explícito e `src/middleware.ts`)
-- Tweak de `getMapCategoryLabel` para fallback em categorias desconhecidas (evitar crash em `entertainment`)
-- Decisão de usar `noValidate` no form de login para priorizar erros do Zod
-- Estrutura final dos namespaces de i18n e chaves de tradução
+- Revisei o fluxo do hydrateSession (cookie + localStorage/sessionStorage)
 
 **Decisões técnicas com justificativa:**
 - **Middleware vs guards no cliente:** Middleware roda no Edge antes da página; protege todas as rotas e redireciona sem flash de conteúdo. Guards client-side (ex. AuthBlocker) complementam, mas o middleware é a linha de defesa principal.
@@ -371,16 +371,8 @@ pnpm lint
 Crie um arquivo `.env.local` na raiz:
 
 ```env
-NEXT_PUBLIC_API_URL="https://sua-api.exemplo.com"
+NEXT_PUBLIC_API_URL="https://nortus-challenge.api.stage.loomi.com.br"
 ```
 
 - Usada em `services/api.ts` para montar as URLs das chamadas.
 - Em produção (ex.: Vercel), defina a variável no painel do provedor.
-
----
-
-## Observações
-
-- **localhost vs 127.0.0.1**: cookies não são compartilhados entre domínios diferentes; use sempre o mesmo.
-- **Lembrar de mim**: requer cookie com `Max-Age`; `sessionStorage` é usado quando não está marcado.
-- **API externa**: CORS deve permitir o domínio da aplicação; em rede local (ex.: 192.168.x.x), verifique se a API aceita essa origem.
