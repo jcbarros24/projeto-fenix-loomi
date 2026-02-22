@@ -16,7 +16,7 @@ import {
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 
 import Input from '@/components/atoms/Input/input'
-import { DataTableSkeleton } from '@/components/organisms/DataTable/dataTableSkeleton'
+import { DataTableSkeleton } from '@/components/organisms/DataTable'
 import {
   Select,
   SelectContent,

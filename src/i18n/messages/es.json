@@ -117,7 +117,8 @@
       "health": "Salud",
       "park": "Parque",
       "food": "Alimentación",
-      "commerce": "Comercio"
+      "commerce": "Comercio",
+      "entertainment": "Entretenimiento"
     },
     "others": "Otros"
   }
