@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useDashboardData, useMapLocations } from '@/hooks/queries'
 import { useTranslations } from 'next-intl'
 import type { ApexOptions } from 'apexcharts'
 import dynamic from 'next/dynamic'
@@ -19,9 +19,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { ActiveClientsDataTable } from '@/components/organisms/ActiveClientsDataTable/activeClientsDataTable'
 import { getMapCategoryLabel } from '@/lib/mapCategoryLabel'
-import { apiFetch } from '@/services/api'
-import { DashboardResponse } from '@/types/dashboard'
-import { MapLocationResponse } from '@/types/map'
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
@@ -77,16 +74,9 @@ export default function DashboardPage() {
     isPending: isDashboardPending,
     isFetching: isDashboardFetching,
     isError: isDashboardError,
-  } = useQuery({
-    queryKey: ['dashboard-data'],
-    queryFn: () => apiFetch<DashboardResponse>('/nortus-v1/dashboard'),
-  })
+  } = useDashboardData()
 
-  // Ele vem com outro "data" dentro.
-  const { data: locationsData } = useQuery({
-    queryKey: ['map-locations'],
-    queryFn: () => apiFetch<MapLocationResponse>('/map/locations'),
-  })
+  const { data: locationsData } = useMapLocations()
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
