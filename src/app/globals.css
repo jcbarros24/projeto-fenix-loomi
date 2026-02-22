@@ -132,7 +132,7 @@
 }
 
 body {
-  background-color: hsl(var(--background));
+  background-color: var(--background-original);
   color: hsl(var(--foreground));
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
@@ -203,13 +203,22 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
 }
 
-/* Mantém input dark com texto branco e interior escuro mesmo com autofill */
+/* Mantém input dark com texto branco e interior escuro mesmo com autofill (Chrome) */
 input[data-variant='dark']:-webkit-autofill,
 input[data-variant='dark']:-webkit-autofill:hover,
+input[data-variant='dark']:-webkit-autofill:focus {
+  -webkit-text-fill-color: white !important;
+  box-shadow: inset 0 0 0 1000px #0b0d1c !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Mantém input modal (bg-black/10) com tema escuro mesmo com autofill (Chrome) */
+input[data-variant='modal']:-webkit-autofill,
+input[data-variant='modal']:-webkit-autofill:hover,
 input[data-variant='dark']:-webkit-autofill:focus {
   -webkit-text-fill-color: white !important;
   box-shadow: inset 0 0 0 1000px #0b0d1c !important;

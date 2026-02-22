@@ -13,7 +13,9 @@ export const inputVariants = cva(
       variant: {
         default:
           'border-gray-300 text-gray-900 focus:border-primary-300 focus:ring-2 focus:ring-primary-50 focus:ring-offset-2',
-        dark: 'border-white/60 bg-transparent text-white focus:border-white',
+        dark: 'border-white/60 bg-transparent text-white focus:border-white rounded-2xl',
+        modal:
+          '!border-white/20 bg-black/10 text-white focus:border-white placeholder:!text-slate-400 rounded-[20px]',
         error:
           'border-error-300 text-gray-900 focus:border-error-300 focus:ring-2 focus:ring-error-50 focus:ring-offset-2',
         success:
