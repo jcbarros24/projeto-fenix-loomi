@@ -1,10 +1,9 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 
 import ChatPanel from '@/components/organisms/Chat/ChatPanel'
-import { apiFetch } from '@/services/api'
+import { useChat } from '@/hooks/queries'
 import { ChatApiResponse } from '@/types/chat'
 
 function normalizeChatData(raw: ChatApiResponse): ChatApiResponse {
@@ -40,14 +39,7 @@ function ErrorState({ message }: { message: string }) {
 
 export default function ChatPage() {
   const t = useTranslations('chat')
-  const { data, isPending, isError } = useQuery({
-    queryKey: ['chat-data'],
-    queryFn: async () => {
-      const response = await apiFetch<ChatApiResponse>('/nortus-v1/chat')
-      console.log('[CHAT] GET /nortus-v1/chat - Raw response:', response)
-      return response
-    },
-  })
+  const { data, isPending, isError } = useChat()
 
   if (isPending) {
     return (

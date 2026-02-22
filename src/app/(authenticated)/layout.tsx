@@ -1,7 +1,6 @@
 'use client'
 
 import MenuIcon from '@mui/icons-material/Menu'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
@@ -9,12 +8,15 @@ import { toast } from 'sonner'
 
 import { CreateTicketModal } from '@/components/organisms/Modals/CreateTicketModal/createTicketModal'
 import Sidebar from '@/components/organisms/Sidebar/sidebar'
-import { AuthBlocker } from '@/shared/components/auth-blocker'
 import { Button } from '@/components/ui/button'
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext'
 import { cn } from '@/lib/utils'
-import { apiFetch } from '@/services/api'
-import { Ticket, TicketsApiResponse } from '@/types/ticket'
+import {
+  useCreateTicket,
+  useTicketsForModal,
+} from '@/hooks/queries'
+import { AuthBlocker } from '@/shared/components/auth-blocker'
+import { Ticket } from '@/types/ticket'
 
 function getNextTicketId(tickets: Ticket[]): string {
   const numbers = tickets
@@ -44,45 +46,24 @@ function pageTitleMapping(pathname: string) {
 function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { isExpanded, toggleMobile } = useSidebar()
-  const queryClient = useQueryClient()
   const [isCreateTicketOpen, setIsCreateTicketOpen] = useState(false)
   const pageTitle = pageTitleMapping(pathname)
   const isTicketsRoute = pathname === '/tickets'
 
-  const { data: ticketsData } = useQuery({
-    queryKey: ['tickets'],
-    queryFn: () => apiFetch<TicketsApiResponse>('/tickets'),
-    enabled: isCreateTicketOpen,
-  })
+  const { data: ticketsData } = useTicketsForModal(isCreateTicketOpen)
   const nextTicketId = useMemo(
     () => getNextTicketId(ticketsData?.data ?? []),
     [ticketsData?.data],
   )
 
-  const createTicketMutation = useMutation({
-    mutationFn: async (payload: {
-      ticketId: string
-      priority: string
-      client: string
-      email: string
-      subject: string
-      status: string
-      responsible: string
-    }) => {
-      const response = await apiFetch('/tickets', {
-        method: 'POST',
-        body: payload,
-      })
-      return response
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: ['tickets'] })
+  const createTicketMutation = useCreateTicket({
+    onSuccess: () => {
       toast.success('Ticket criado com sucesso!')
       setIsCreateTicketOpen(false)
     },
     onError: (error) => {
       toast.error('Não foi possível criar o ticket.', {
-        description: error instanceof Error ? error.message : 'Erro ao criar ticket',
+        description: error.message,
       })
     },
   })
