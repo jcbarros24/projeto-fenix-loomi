@@ -2,7 +2,13 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const PUBLIC_PATHS = ['/', '/login']
-const PROTECTED_PREFIXES = ['/dashboard']
+const PROTECTED_PREFIXES = [
+  '/dashboard',
+  '/tickets',
+  '/chat',
+  '/simulator',
+  '/profile',
+]
 
 const isProtectedPath = (pathname: string) =>
   PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
@@ -11,7 +17,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('access_token')?.value
 
-  if (pathname === '/login' && token) {
+  if ((pathname === '/' || pathname === '/login') && token) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/dashboard'
     return NextResponse.redirect(redirectUrl)

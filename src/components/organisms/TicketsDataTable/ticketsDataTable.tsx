@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   CheckCheck,
   ChevronLeft,
@@ -32,6 +33,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Ticket } from '@/types/ticket'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 const statusBadgeClass = (status: string) => {
   const normalized = status.toLowerCase()
@@ -78,12 +81,29 @@ const isToday = (date: Date) => {
   )
 }
 
+const formatAverageTime = (hours: number): string => {
+  if (hours < 1) {
+    const minutes = Math.round(hours * 60)
+    return `${minutes}min`
+  }
+  if (hours < 24) {
+    return `${hours.toFixed(1)}h`
+  }
+  const days = Math.floor(hours / 24)
+  const remainingHours = Math.round(hours % 24)
+  if (remainingHours === 0) {
+    return `${days}d`
+  }
+  return `${days}d ${remainingHours}h`
+}
+
 export function TicketsDataTable({
   tickets,
   isPending,
   isFetching = false,
   isError = false,
 }: TicketsDataTableProps) {
+  const t = useTranslations('tickets')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
@@ -163,14 +183,17 @@ export function TicketsDataTable({
           normalizedStatus.includes('resolvido')
         )
       })
-      .map((ticket) => parseTicketDate(ticket.createdAt))
-      .filter((date): date is Date => Boolean(date))
-      .map((date) => Math.max(0, (Date.now() - date.getTime()) / 3_600_000))
+      .map((ticket) => {
+        const created = parseTicketDate(ticket.createdAt)
+        const updated = parseTicketDate(ticket.updatedAt)
+        if (!created || !updated) return null
+        return Math.max(0, (updated.getTime() - created.getTime()) / 3_600_000)
+      })
+      .filter((h): h is number => typeof h === 'number')
 
     const averageHours =
       hoursSamples.length > 0
-        ? hoursSamples.reduce((sum, hourValue) => sum + hourValue, 0) /
-          hoursSamples.length
+        ? hoursSamples.reduce((sum, h) => sum + h, 0) / hoursSamples.length
         : 0
 
     return {
@@ -217,23 +240,23 @@ export function TicketsDataTable({
             ))
           : [
               {
-                label: 'Tickets Abertos',
+                label: t('openTickets'),
                 value: ticketMetrics.openCount,
                 icon: <TicketIcon className="h-4 w-4 text-cyan-300" />,
               },
               {
-                label: 'Em andamento',
+                label: t('inProgress'),
                 value: ticketMetrics.inProgressCount,
                 icon: <Clock3 className="h-4 w-4 text-amber-300" />,
               },
               {
-                label: 'Resolvidos hoje',
+                label: t('resolvedToday'),
                 value: ticketMetrics.resolvedToday,
                 icon: <CheckCheck className="h-4 w-4 text-cyan-300" />,
               },
               {
-                label: 'Tempo Médio',
-                value: `${ticketMetrics.averageHours.toFixed(1)}h`,
+                label: t('averageTime'),
+                value: formatAverageTime(ticketMetrics.averageHours),
                 icon: <Timer className="h-4 w-4 text-blue-300" />,
               },
             ].map((card) => (
@@ -257,10 +280,10 @@ export function TicketsDataTable({
       <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-lg">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-3xl font-semibold text-white">
-            Lista de Tickets
+            {t('listTitle')}
           </h2>
           {isFetching && !isPending && (
-            <span className="text-xs text-slate-300">Atualizando dados...</span>
+            <span className="text-xs text-slate-300">{t('updating')}</span>
           )}
         </div>
 
@@ -269,7 +292,7 @@ export function TicketsDataTable({
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar por ID, cliente ou assunto..."
+              placeholder={t('searchPlaceholder')}
               icon={<Search className="h-4 w-4" />}
               variant="dark"
               className="h-11 rounded-full border-white/10 !bg-[#0b0d1c] text-slate-100 placeholder:text-slate-500"
@@ -279,11 +302,11 @@ export function TicketsDataTable({
           <div className="min-w-0 flex-1 basis-full sm:basis-auto sm:flex-none sm:w-[170px]">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger variant="table">
-                <SelectValue placeholder="Todos os status" />
+                <SelectValue placeholder={t('allStatus')} />
               </SelectTrigger>
               <SelectContent variant="table">
                 <SelectItem value="all" variant="table">
-                  Todos os status
+                  {t('allStatus')}
                 </SelectItem>
                 {statusOptions.map((status) => (
                   <SelectItem key={status} value={status} variant="table">
@@ -297,11 +320,11 @@ export function TicketsDataTable({
           <div className="min-w-0 flex-1 basis-full sm:basis-auto sm:flex-none sm:w-[170px]">
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger variant="table">
-                <SelectValue placeholder="Todas as prioridades" />
+                <SelectValue placeholder={t('allPriorities')} />
               </SelectTrigger>
               <SelectContent variant="table">
                 <SelectItem value="all" variant="table">
-                  Todas as prioridades
+                  {t('allPriorities')}
                 </SelectItem>
                 {priorityOptions.map((priority) => (
                   <SelectItem key={priority} value={priority} variant="table">
@@ -319,7 +342,7 @@ export function TicketsDataTable({
               </SelectTrigger>
               <SelectContent variant="table">
                 <SelectItem value="all" variant="table">
-                  Todos os responsáveis
+                  {t('allResponsibles')}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -330,14 +353,16 @@ export function TicketsDataTable({
           <Table className="text-slate-200">
             <TableHeader className="[&_tr]:border-white/10">
               <TableRow className="border-white/10 hover:bg-transparent">
-                <TableHead className="text-slate-400">ID</TableHead>
-                <TableHead className="text-slate-400">Prioridade</TableHead>
-                <TableHead className="text-slate-400">Cliente</TableHead>
-                <TableHead className="text-slate-400">Assunto</TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400">Criado em</TableHead>
-                <TableHead className="text-slate-400">Responsável</TableHead>
-                <TableHead className="text-slate-400">Ações</TableHead>
+                <TableHead className="text-slate-400">{t('id')}</TableHead>
+                <TableHead className="text-slate-400">{t('priority')}</TableHead>
+                <TableHead className="text-slate-400">{t('client')}</TableHead>
+                <TableHead className="text-slate-400">{t('subject')}</TableHead>
+                <TableHead className="text-slate-400">{t('status')}</TableHead>
+                <TableHead className="text-slate-400">{t('createdAt')}</TableHead>
+                <TableHead className="text-slate-400">
+                  {t('responsible')}
+                </TableHead>
+                <TableHead className="text-slate-400">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -363,7 +388,7 @@ export function TicketsDataTable({
                       colSpan={8}
                       className="h-20 text-center text-slate-300"
                     >
-                      Não foi possível carregar os tickets.
+                      {t('loadError')}
                     </TableCell>
                   </TableRow>
                 ) : paginatedTickets.length ? (
@@ -400,7 +425,11 @@ export function TicketsDataTable({
                           {ticket.status}
                         </span>
                       </TableCell>
-                      <TableCell>{ticket.createdAt}</TableCell>
+                      <TableCell>
+                        {format(ticket.createdAt, 'dd/MM/yyyy', {
+                          locale: ptBR,
+                        })}
+                      </TableCell>
                       <TableCell>{ticket.responsible}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3 text-sm text-slate-300">
@@ -415,7 +444,7 @@ export function TicketsDataTable({
                             type="button"
                             className="inline-flex items-center gap-1"
                           >
-                            Ver
+                            {t('view')}
                             <ChevronRight className="h-3.5 w-3.5 text-blue-400" />
                           </button>
                         </div>
@@ -428,7 +457,7 @@ export function TicketsDataTable({
                       colSpan={8}
                       className="h-20 text-center text-slate-300"
                     >
-                      Nenhum ticket encontrado com os filtros selecionados.
+                      {t('noTickets')}
                     </TableCell>
                   </TableRow>
                 )}

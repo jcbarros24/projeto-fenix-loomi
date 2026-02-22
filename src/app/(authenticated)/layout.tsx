@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 
 import { CreateTicketModal } from '@/components/organisms/Modals/CreateTicketModal/createTicketModal'
 import Sidebar from '@/components/organisms/Sidebar/sidebar'
+import { AuthBlocker } from '@/shared/components/auth-blocker'
 import { Button } from '@/components/ui/button'
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext'
 import { cn } from '@/lib/utils'
@@ -26,12 +27,26 @@ function getNextTicketId(tickets: Ticket[]): string {
   return `TK${max + 1}`
 }
 
+function pageTitleMapping(pathname: string) {
+  switch (pathname) {
+    case '/tickets':
+      return 'Gestão de Tickets'
+    case '/chat':
+      return 'Chat & Assistente Virtual'
+    case '/profile':
+      return 'Perfil'
+    case '/simulator':
+      return 'Simulador de Planos'
+    default:
+      return 'Dashboard'
+  }
+}
 function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { isExpanded, toggleMobile } = useSidebar()
   const queryClient = useQueryClient()
   const [isCreateTicketOpen, setIsCreateTicketOpen] = useState(false)
-  const pageTitle = `${pathname.split('/')[1]?.charAt(0).toUpperCase() ?? ''}${pathname.split('/')[1]?.slice(1).toLowerCase() ?? ''}`
+  const pageTitle = pageTitleMapping(pathname)
   const isTicketsRoute = pathname === '/tickets'
 
   const { data: ticketsData } = useQuery({
@@ -129,8 +144,10 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
-      <AuthenticatedShell>{children}</AuthenticatedShell>
-    </SidebarProvider>
+    <AuthBlocker>
+      <SidebarProvider>
+        <AuthenticatedShell>{children}</AuthenticatedShell>
+      </SidebarProvider>
+    </AuthBlocker>
   )
 }

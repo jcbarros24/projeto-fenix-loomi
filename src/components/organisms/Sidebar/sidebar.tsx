@@ -5,7 +5,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import ChatBubbleIcon from '@mui/icons-material/ChatBubbleOutline'
 import CloseIcon from '@mui/icons-material/Close'
 import ChecklistIcon from '@mui/icons-material/Checklist'
-import { TicketIcon } from 'lucide-react'
+import { Calendar, TicketIcon, TrendingUpIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -41,9 +41,9 @@ const items: SidebarItem[] = [
     icon: <ChecklistIcon className="text-white" fontSize="small" />,
   },
   {
-    label: 'Agenda',
-    href: '/agenda',
-    icon: <CalendarMonthIcon className="text-white" fontSize="small" />,
+    label: 'Simulador de Planos',
+    href: '/simulator',
+    icon: <Calendar className="text-white" fontSize="small" />,
   },
 ]
 

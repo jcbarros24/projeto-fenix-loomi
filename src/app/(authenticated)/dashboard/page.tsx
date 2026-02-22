@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useTranslations } from 'next-intl'
 import type { ApexOptions } from 'apexcharts'
 import dynamic from 'next/dynamic'
 import 'ol/ol.css'
@@ -17,6 +18,7 @@ import View from 'ol/View'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { ActiveClientsDataTable } from '@/components/organisms/ActiveClientsDataTable/activeClientsDataTable'
+import { getMapCategoryLabel } from '@/lib/mapCategoryLabel'
 import { apiFetch } from '@/services/api'
 import { DashboardResponse } from '@/types/dashboard'
 import { MapLocationResponse } from '@/types/map'
@@ -25,30 +27,46 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 type KpiKey = 'retention' | 'conversion' | 'churn' | 'arpu'
 
+const MAP_CATEGORIES = [
+  'sports',
+  'transport',
+  'heritage',
+  'education',
+  'tourism',
+  'health',
+  'park',
+  'food',
+  'commerce',
+] as const satisfies readonly string[]
+
 const CATEGORY_COLORS: Record<string, string> = {
-  default: '#22d3ee',
-  automovel: '#38bdf8',
-  residencial: '#f59e0b',
-  vida: '#34d399',
-  profissional: '#f472b6',
-  empresarial: '#a78bfa',
+  sports: '#ef4444',
+  transport: '#f59e0b',
+  heritage: '#8b5cf6',
+  education: '#3b82f6',
+  tourism: '#06b6d4',
+  health: '#22c55e',
+  park: '#84cc16',
+  food: '#ec4899',
+  commerce: '#6366f1',
+  default: '#94a3b8',
 }
 
 const resolveCategoryColor = (category?: string) => {
-  const normalized = category?.toLowerCase() ?? ''
-
-  if (normalized.includes('auto')) return CATEGORY_COLORS.automovel
-  if (normalized.includes('resid')) return CATEGORY_COLORS.residencial
-  if (normalized.includes('vida')) return CATEGORY_COLORS.vida
-  if (normalized.includes('prof')) return CATEGORY_COLORS.profissional
-  if (normalized.includes('emp')) return CATEGORY_COLORS.empresarial
-
+  const normalized = (category ?? '').toLowerCase().trim()
+  if (CATEGORY_COLORS[normalized]) return CATEGORY_COLORS[normalized]
   return CATEGORY_COLORS.default
 }
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
+  const tMap = useTranslations('map')
   const mapRef = useRef<HTMLDivElement | null>(null)
   const mapInstanceRef = useRef<Map | null>(null)
+  const tooltipLabelRef = useRef<
+    { t: (k: string) => string; tMap: (k: string) => string }
+  >({ t: () => '', tMap: () => '' })
+  tooltipLabelRef.current = { t, tMap }
   const tooltipRef = useRef<HTMLDivElement | null>(null)
   const overlayRef = useRef<Overlay | null>(null)
   const vectorSourceRef = useRef<VectorSource>(new VectorSource())
@@ -133,7 +151,12 @@ export default function DashboardPage() {
 
       const name = feature.get('name') as string | undefined
       const category = feature.get('category') as string | undefined
-      const label = name ?? category ?? 'Cliente'
+      const { t: tCur, tMap: tMapCur } = tooltipLabelRef.current
+      const categoryLabel = category
+        ? getMapCategoryLabel(tMapCur, category)
+        : ''
+      const parts = [name, categoryLabel].filter(Boolean)
+      const label = parts.length > 0 ? parts.join(' • ') : tCur('client')
 
       tooltipRef.current.textContent = label
       tooltipRef.current.style.display = 'block'
@@ -143,7 +166,10 @@ export default function DashboardPage() {
 
     mapInstanceRef.current = map
 
-    return () => map.setTarget(undefined)
+    return () => {
+      map.setTarget(undefined)
+      mapInstanceRef.current = null
+    }
   }, [])
 
   useEffect(() => {
@@ -200,12 +226,12 @@ export default function DashboardPage() {
 
   const kpiLabelMap = useMemo(
     () => ({
-      retention: 'Retenção',
-      conversion: 'Conversão',
-      churn: 'Churn',
-      arpu: 'ARPU',
+      retention: t('retention'),
+      conversion: t('conversion'),
+      churn: t('churn'),
+      arpu: t('arpu'),
     }),
-    [],
+    [t],
   )
 
   const selectedTrend = useMemo(() => {
@@ -294,14 +320,14 @@ export default function DashboardPage() {
   const barSeries = useMemo(
     () => [
       {
-        name: 'Novos clientes',
+        name: t('newClients'),
         data:
           conversionBarData.length > 0
             ? conversionBarData
             : [95, 72, 105, 40, 63, 78],
       },
     ],
-    [conversionBarData],
+    [conversionBarData, t],
   )
 
   const totalNewCustomers = useMemo(() => {
@@ -345,7 +371,8 @@ export default function DashboardPage() {
       tooltip: {
         theme: 'dark',
         y: {
-          formatter: (val: number) => `${Math.round(val)} novos clientes`,
+          formatter: (val: number) =>
+            `${Math.round(val)} ${t('newClients').toLowerCase()}`,
         },
       },
       fill: {
@@ -359,7 +386,7 @@ export default function DashboardPage() {
         },
       },
     }),
-    [defaultConversionMonths],
+    [defaultConversionMonths, t],
   )
 
   return (
@@ -368,7 +395,7 @@ export default function DashboardPage() {
         <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-md font-sans font-semibold text-white">
-              Evolução dos KPI&apos;s
+              {t('kpiEvolution')}
             </h2>
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-200">
               {(Object.keys(kpiLabelMap) as KpiKey[]).map((key) => {
@@ -404,7 +431,7 @@ export default function DashboardPage() {
         <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-1 text-sm font-semibold text-white">
-              Taxa de conversão
+              {t('conversionRate')}
               <span className="text-white/70">&gt;</span>
             </h2>
             <div className="text-right text-xs text-slate-300">
@@ -413,7 +440,9 @@ export default function DashboardPage() {
                   ? `${conversionRate.toFixed(1)}%`
                   : '--'}
               </div>
-              <div>{totalNewCustomers} clientes</div>
+              <div>
+                {totalNewCustomers} {t('clients')}
+              </div>
             </div>
           </div>
           <div className="mt-4">
@@ -430,14 +459,14 @@ export default function DashboardPage() {
       <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-sm font-semibold text-white">
-            Mapa de clientes por região
+            {t('mapTitle')}
           </h2>
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-200">
             <button className="rounded-full border border-white/10 bg-white/10 px-3 py-1">
-              Todos os locais
+              {t('allLocations')}
             </button>
             <button className="rounded-full border border-white/10 bg-white/10 px-3 py-1">
-              Todos os tipos
+              {t('allTypes')}
             </button>
           </div>
         </div>
@@ -449,6 +478,27 @@ export default function DashboardPage() {
             ref={tooltipRef}
             className="pointer-events-none absolute z-20 hidden rounded-lg bg-black/70 px-2 py-1 text-xs text-white backdrop-blur"
           />
+          <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-x-3 gap-y-1.5 rounded-lg border border-white/10 bg-black/70 px-3 py-2 backdrop-blur">
+            {MAP_CATEGORIES.map((cat) => (
+              <div
+                key={cat}
+                className="flex items-center gap-1.5 text-[10px] text-slate-200"
+              >
+                <span
+                  className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/20"
+                  style={{ backgroundColor: CATEGORY_COLORS[cat] }}
+                />
+                <span>{getMapCategoryLabel(tMap, cat)}</span>
+              </div>
+            ))}
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-200">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/20"
+                style={{ backgroundColor: CATEGORY_COLORS.default }}
+              />
+              <span>{tMap('others')}</span>
+            </div>
+          </div>
         </div>
       </section>
 
