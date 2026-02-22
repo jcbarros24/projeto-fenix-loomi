@@ -82,7 +82,7 @@ export function CreateTicketModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-[32px] border border-white/10 !bg-[#0b0d1c] p-8 text-white sm:p-10">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-[32px] border border-white/10 !bg-[#0b0d1c] p-8 text-white shadow-card-fade sm:p-10">
         <div className="flex items-start justify-between gap-4">
           <div>
             <DialogTitle className="font-regular font-space-grotesk text-4xl text-white">

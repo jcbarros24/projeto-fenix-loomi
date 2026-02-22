@@ -231,7 +231,7 @@ export function TicketsDataTable({
           ? Array.from({ length: 4 }).map((_, index) => (
               <article
                 key={`ticket-card-skeleton-${index}`}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] p-5"
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card-fade"
               >
                 <div className="h-4 w-24 animate-pulse rounded bg-white/10" />
                 <div className="mt-4 h-7 w-10 animate-pulse rounded bg-white/15" />
@@ -262,7 +262,7 @@ export function TicketsDataTable({
             ].map((card) => (
               <article
                 key={card.label}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] p-5"
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-card-fade"
               >
                 <p className="text-sm text-slate-300">{card.label}</p>
                 <div className="mt-3 flex items-end justify-between">
@@ -277,7 +277,7 @@ export function TicketsDataTable({
             ))}
       </div>
 
-      <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-lg">
+      <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-card-fade">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-3xl font-semibold text-white">
             {t('listTitle')}
@@ -349,7 +349,7 @@ export function TicketsDataTable({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/10">
+        <div className="overflow-hidden rounded-2xl border border-white/10 shadow-card-fade">
           <Table className="text-slate-200">
             <TableHeader className="[&_tr]:border-white/10">
               <TableRow className="border-white/10 hover:bg-transparent">

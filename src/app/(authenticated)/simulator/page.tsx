@@ -111,7 +111,7 @@ export default function SimulatorPage() {
         {/* Coluna da esquerda */}
         <div className="flex flex-col gap-6">
           {/* Planos personalizados */}
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
             <h2 className="mb-4 text-lg font-semibold text-white">
               {t('personalizedPlans')}
             </h2>
@@ -151,7 +151,7 @@ export default function SimulatorPage() {
           </section>
 
           {/* Valor do veículo */}
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
             <h3 className="mb-3 text-sm font-semibold text-white">
               {t('vehicleValue')}: {formatCurrency(vehicleValue)}
             </h3>
@@ -171,7 +171,7 @@ export default function SimulatorPage() {
           </section>
 
           {/* Idade do Cliente */}
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
             <h3 className="mb-3 text-sm font-semibold text-white">
               {t('clientAge')}: {clientAge} {t('years')}
             </h3>
@@ -191,7 +191,7 @@ export default function SimulatorPage() {
           </section>
 
           {/* Coberturas Adicionais */}
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
             <h3 className="mb-4 text-sm font-semibold text-white">
               {t('additionalCoverages')}
             </h3>
@@ -223,7 +223,7 @@ export default function SimulatorPage() {
         {/* Coluna da direita */}
         <div className="flex flex-col gap-6">
           {/* Benefícios Inclusos */}
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
             <h3 className="mb-4 text-sm font-semibold text-white">
               {t('includedBenefits')}
             </h3>
@@ -246,7 +246,7 @@ export default function SimulatorPage() {
           </section>
 
           {/* Indicadores */}
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-card-fade">
             <h3 className="mb-4 text-sm font-semibold text-white">
               {t('indicators')}
             </h3>
@@ -278,7 +278,7 @@ export default function SimulatorPage() {
           </section>
 
           {/* Resumo do plano selecionado */}
-          <section className="rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 shadow-lg">
+          <section className="rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 shadow-card-fade">
             <h3 className="mb-2 text-sm font-semibold text-white">
               {t('selectedPlan')}
             </h3>
