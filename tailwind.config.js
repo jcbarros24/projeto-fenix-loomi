@@ -147,6 +147,10 @@ module.exports = {
           950: 'hsl(var(--gray-950))',
         },
       },
+      boxShadow: {
+        'card-fade':
+          '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1), 0 0 24px -4px rgba(255, 255, 255, 0.06), 0 0 12px -2px rgba(255, 255, 255, 0.04)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
