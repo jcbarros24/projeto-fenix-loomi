@@ -1,13 +1,12 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useSimulatorPlanos } from '@/hooks/queries'
 import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
 import { cn } from '@/lib/utils'
-import { apiFetch } from '@/services/api'
 import { PlanIndicator, SimulatorApiResponse } from '@/types/simulator'
 
 type PlanName = 'Básico' | 'Intermediário' | 'Premium'
@@ -64,11 +63,7 @@ export default function SimulatorPage() {
     fenomenos: false,
   })
 
-  const { data: rawData, isPending } = useQuery({
-    queryKey: ['simulator-planos'],
-    queryFn: () =>
-      apiFetch<SimulatorApiResponse>('/nortus-v1/simulador-planos'),
-  })
+  const { data: rawData, isPending } = useSimulatorPlanos()
 
   const { includedBenefits, plansIndicators } = rawData
     ? normalizeResponse(rawData)

@@ -157,7 +157,7 @@ src/
 │   ├── page.tsx                  # Redireciona para LoginPage
 │   ├── not-found.tsx             # 404 com redirect em 5s
 │   └── globals.css
-├── components/
+├── components/                   #Seguindo Atomic Design
 │   ├── atoms/
 │   ├── molecules/
 │   ├── organisms/
@@ -175,9 +175,7 @@ src/
 │   ├── mapCategoryLabel.ts       # Tradução de categorias do mapa
 │   └── utils.ts
 ├── services/
-│   ├── api.ts                    # apiFetch, ApiError, setUnauthorizedHandler
-│   └── tickets/
-│       └── normalizeTickets.ts
+│   └── api.ts                    # apiFetch, ApiError, setUnauthorizedHandler
 ├── shared/
 │   └── components/
 │       ├── auth-blocker.tsx

@@ -1,8 +1,9 @@
 'use client'
 
-import { getCookie } from '@/lib/cookies'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+
+import { getCookie } from '@/lib'
 
 const ACCESS_TOKEN_KEY = 'access_token'
 const REDIRECT_DELAY_MS = 5000
