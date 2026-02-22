@@ -35,12 +35,16 @@ export const setCookie = (
 
   const parts = [`${name}=${encodeURIComponent(value)}`]
 
-  if (maxAge) {
-    parts.push(`Max-Age=${maxAge}`)
-  }
-
   if (path) {
     parts.push(`Path=${path}`)
+  }
+
+  if (maxAge) {
+    parts.push(`Max-Age=${maxAge}`)
+    // Expires como fallback para compatibilidade (localhost, alguns browsers)
+    const expires = new Date()
+    expires.setTime(expires.getTime() + maxAge * 1000)
+    parts.push(`Expires=${expires.toUTCString()}`)
   }
 
   if (sameSite) {

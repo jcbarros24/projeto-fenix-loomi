@@ -1,10 +1,11 @@
 'use client'
 
 import { Search } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useDeferredValue, useMemo, useState } from 'react'
 
 import Input from '@/components/atoms/Input/input'
-import { DataTableSkeleton } from '@/components/organisms/DataTable/dataTableSkeleton'
+import { DataTableSkeleton } from '@/components/organisms/DataTable'
 import {
   Select,
   SelectContent,
@@ -55,6 +56,7 @@ export function ActiveClientsDataTable({
   isFetching = false,
   isError = false,
 }: ActiveClientsDataTableProps) {
+  const t = useTranslations('clients')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
@@ -110,9 +112,9 @@ export function ActiveClientsDataTable({
   return (
     <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-lg">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-3xl font-semibold text-white">Clientes ativos</h2>
+        <h2 className="text-3xl font-semibold text-white">{t('title')}</h2>
         {isFetching && !isPending && (
-          <span className="text-xs text-slate-300">Atualizando dados...</span>
+          <span className="text-xs text-slate-300">{t('updating')}</span>
         )}
       </div>
 
@@ -121,7 +123,7 @@ export function ActiveClientsDataTable({
           <Input
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Buscar por nome ou email..."
+            placeholder={t('searchPlaceholder')}
             icon={<Search className="h-4 w-4" />}
             variant="dark"
             className="h-11 rounded-full border-white/10 !bg-[#0b0d1c] text-slate-100 placeholder:text-slate-500"
@@ -131,11 +133,11 @@ export function ActiveClientsDataTable({
         <div className="min-w-0 flex-1 basis-full sm:basis-auto sm:flex-none sm:w-[170px]">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger variant="table">
-              <SelectValue placeholder="Todos os status" />
+              <SelectValue placeholder={t('allStatus')} />
             </SelectTrigger>
             <SelectContent variant="table">
               <SelectItem value="all" variant="table">
-                Todos os status
+                {t('allStatus')}
               </SelectItem>
               {statusOptions.map((status) => (
                 <SelectItem key={status} value={status as string} variant="table">
@@ -149,11 +151,11 @@ export function ActiveClientsDataTable({
         <div className="min-w-0 flex-1 basis-full sm:basis-auto sm:flex-none sm:w-[170px]">
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger variant="table">
-              <SelectValue placeholder="Todos os tipos" />
+              <SelectValue placeholder={t('allTypes')} />
             </SelectTrigger>
             <SelectContent variant="table">
               <SelectItem value="all" variant="table">
-                Todos os tipos
+                {t('allTypes')}
               </SelectItem>
               {typeOptions.map((type) => (
                 <SelectItem key={type} value={type as string} variant="table">
@@ -167,11 +169,11 @@ export function ActiveClientsDataTable({
         <div className="min-w-0 flex-1 basis-full sm:basis-auto sm:flex-none sm:w-[170px]">
           <Select value={regionFilter} onValueChange={setRegionFilter}>
             <SelectTrigger variant="table">
-              <SelectValue placeholder="Todos os locais" />
+              <SelectValue placeholder={t('allLocations')} />
             </SelectTrigger>
             <SelectContent variant="table">
               <SelectItem value="all" variant="table">
-                Todos os locais
+                {t('allLocations')}
               </SelectItem>
               {regionOptions.map((region) => (
                 <SelectItem
@@ -191,12 +193,12 @@ export function ActiveClientsDataTable({
         <Table className="text-slate-200">
           <TableHeader className="[&_tr]:border-white/10">
             <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="text-slate-400">Nome</TableHead>
-              <TableHead className="text-slate-400">Tipo de Seguro</TableHead>
-              <TableHead className="text-slate-400">Valor mensal</TableHead>
-              <TableHead className="text-slate-400">Status</TableHead>
-              <TableHead className="text-slate-400">Renovação</TableHead>
-              <TableHead className="text-slate-400">Região</TableHead>
+              <TableHead className="text-slate-400">{t('name')}</TableHead>
+              <TableHead className="text-slate-400">{t('insuranceType')}</TableHead>
+              <TableHead className="text-slate-400">{t('monthlyValue')}</TableHead>
+              <TableHead className="text-slate-400">{t('status')}</TableHead>
+              <TableHead className="text-slate-400">{t('renewal')}</TableHead>
+              <TableHead className="text-slate-400">{t('region')}</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -220,7 +222,7 @@ export function ActiveClientsDataTable({
                     colSpan={6}
                     className="h-20 text-center text-slate-300"
                   >
-                    Nao foi possivel carregar os clientes ativos.
+                    {t('loadError')}
                   </TableCell>
                 </TableRow>
               ) : filteredClients.length ? (
@@ -258,7 +260,7 @@ export function ActiveClientsDataTable({
                     colSpan={6}
                     className="h-20 text-center text-slate-300"
                   >
-                    Nenhum cliente encontrado com os filtros selecionados.
+                    {t('noClients')}
                   </TableCell>
                 </TableRow>
               )}

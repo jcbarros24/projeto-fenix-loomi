@@ -69,18 +69,19 @@ export default function LoginPage() {
   return (
     <div className="relative grid min-h-screen w-full grid-cols-1 gap-10 bg-[#0b0d1c] p-6 min-[1000px]:grid-cols-2 min-[1000px]:p-8">
       <section className="flex flex-col gap-12 p-2 min-[1000px]:p-6">
-        <h1 className="font-inter mb-[12%] text-5xl font-semibold text-blue-600">
+        <h1 className="mb-[12%] font-inter text-5xl font-semibold text-blue-600">
           Nortus
         </h1>
         <div className="space-y-3">
-          <h2 className="font-space-grotesk text-gray-primary text-3xl">
+          <h2 className="font-space-grotesk text-3xl text-gray-primary">
             {t('title')}
           </h2>
-          <p className="font-inter text-gray-primary text-lg">
+          <p className="font-inter text-lg text-gray-primary">
             {t('subtitle')}
           </p>
         </div>
         <form
+          noValidate
           onSubmit={handleSubmit(handleSubmitForm)}
           className="flex flex-col gap-8"
         >
@@ -182,7 +183,7 @@ export default function LoginPage() {
       <div className="absolute right-4 top-4 z-30 flex w-fit items-center gap-2 rounded-2xl bg-[#0b0d1c]/80 p-2 backdrop-blur">
         <Button
           variant="ghost"
-          className="text-gray-primary flex flex-row items-center gap-2 px-3 py-2"
+          className="flex flex-row items-center gap-2 bg-[#28242429] px-3 py-2 text-gray-primary"
         >
           <LifeBuoy className="h-5 w-5" />
           <span className="text-sm">{t('help')}</span>
@@ -191,7 +192,7 @@ export default function LoginPage() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="text-gray-primary flex flex-row items-center gap-2 px-3 py-2"
+              className="flex flex-row items-center gap-2 rounded-full bg-[#28242429] px-3 py-2 text-gray-primary"
             >
               <Globe className="h-5 w-5" />
               <span className="text-sm">{currentLocaleLabel}</span>
@@ -200,7 +201,7 @@ export default function LoginPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="text-gray-primary min-w-[180px] border-white/10 bg-[#0b0d1c]"
+            className="min-w-[180px] border-white/10 bg-[#28242429] text-gray-primary"
           >
             <DropdownMenuItem onClick={() => handleLocaleChange('pt')}>
               {tLanguage('pt')}
